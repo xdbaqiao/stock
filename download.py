@@ -21,6 +21,7 @@ class download:
     def get(self, url):
         self.add_proxy(url, self.proxy)
         request = urllib2.Request(url)
+        print 'Downloading %s' % url
         response = self.opener.open(request)
         html = response.read()
         return html
