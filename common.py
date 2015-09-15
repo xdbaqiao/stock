@@ -40,9 +40,12 @@ def get_history_volume(start_date='20130915', end_date='20150915'):
             bag[i[0]] = i[-3]
     except Exception:
         print 'json data null...'
-    return json.dumps(bag, sort_keys=True, ensure_ascii=False).encode('utf8')
+    return bag
 
 if __name__ == '__main__':
     #stock_code = 'sh601006'
     #print get_latest_information(stock_code)
-    print get_history_volume()
+    from gnuplot import gnuplot
+    bag = get_history_volume()
+    gnuplot(x=bag.keys(), y=bag.values(), title='上证指数历史成交量')
+
