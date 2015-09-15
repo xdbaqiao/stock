@@ -26,7 +26,26 @@ def get_latest_information(stock_code):
         print 'IndexError...'
     return json.dumps(bag, sort_keys=True, ensure_ascii=False).encode('utf8')
 
+def get_history_volume(start_date='20130915', end_date='20150915'):
+    # 上证指数历史成交量
+    url = 'http://q.stock.sohu.com/hisHq?code=zs_000001&start=%s&end=%s&stat=1&order=D&period=d&callback=historySearchHandler&rt=jsonp' % (start_date, end_date)
+    html = download(url).get(url)
+    html = html.decode('gbk')
+    m = re.compile(r'Handler\(\[(.*)\]\)', flags=re.IGNORECASE).search(html.strip())
+    json_data = m.groups()[0] if m else ''
+    bag = {}
+    try:
+        datas = json.loads(json_data)
+        for i in datas['hq']:
+            bag[i[0]] = i[-3]
+    except Exception:
+        print 'json data null...'
+    return bag
 
 if __name__ == '__main__':
-    stock_code = 'sh601006'
-    print get_latest_information(stock_code)
+    #stock_code = 'sh601006'
+    #print get_latest_information(stock_code)
+    from gnuplot import gnuplot
+    bag = get_history_volume()
+    gnuplot(x=bag.keys(), y=bag.values(), title='上证指数历史成交量')
+
