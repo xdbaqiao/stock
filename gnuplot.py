@@ -11,7 +11,7 @@ class gnuplot:
         self.plot()
 
     def plot(self):
-        self.g = Gnuplot.Gnuplot(debug=1)
+        self.g = Gnuplot.Gnuplot(debug=0)
         d = Gnuplot.Data(self.x, self.y, with_='lines')
         self.g.title(self.title)
         self.g.xlabel('times')
