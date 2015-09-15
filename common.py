@@ -6,8 +6,8 @@ import json
 from download import download 
 
 def get_latest_information(stock_code):
-    """ get the latest stock information
-    """ return json format result
+    # get the latest stock information
+    # return json format result
     fields = [u'股票名称', u'今日开盘价', u'昨日收盘价', u'当前价格', u'今日最高价',\
             u'今日最低价', u'竞买价', u'竞卖价', u'成交量', u'成交额', u'买一/股', u'买一/元',\
              u'买二/股', u'买二/元', u'买三/股', u'买三/元', u'买四/股', u'买四/元', u'买五/股',\
