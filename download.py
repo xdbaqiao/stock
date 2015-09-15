@@ -1,20 +1,10 @@
 #!/usr/bin/env python2
 #coding: utf-8
 
-import re
-import string
 import urllib
 import urllib2
-import logging
-import cookielib
-import threading
-from collections import deque
 
-def set_log():
-    FMT = '%(asctime)s-%(levelname)s\t%(message)s'
-    logging.basicConfig(format=FMT, level=logging.INFO, filename='downloading.log', filemode='a')
-
-class Download:
+class download:
     def __init__(self, first_url, proxy=None):
         self.user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:5.0) Gecko/20100101 Firefox/5.0'
         self.headers = {'User-Agent': self.user_agent, 'Accept-encoding':'gzip, deflate', 'Referer': first_url}
