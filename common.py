@@ -45,7 +45,14 @@ def get_history_volume(start_date='20130915', end_date='20150915'):
 if __name__ == '__main__':
     #stock_code = 'sh601006'
     #print get_latest_information(stock_code)
-    from gnuplot import gnuplot
-    bag = get_history_volume()
-    gnuplot(x=len(bag.keys()), y=bag.values(), title='上证指数历史成交量')
-
+    import matplotlib
+    matplotlib.use('Agg')
+    import matplotlib.pyplot as plt
+    from matplotlib import pylab
+    import numpy as np
+    bag = get_history_volume(start_date='20150615')
+    plt.figure()
+    plt.bar(range(len(bag.keys())), [int(i) for i in bag.values()], alpha = .5, color = 'g', width=0.35)
+    #plt.plot(range(len(bag.keys())), bag.values())
+    plt.title('test')
+    pylab.savefig('volume.png')
