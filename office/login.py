@@ -34,3 +34,4 @@ def login(userid, passwd, dynamic_passwd):
     post_data['btnLogin.x'] = '0'
     post_data['btnLogin.y'] =  '0'
     html = download().post(url, post_data)
+    #TODO 验证登录
