@@ -32,5 +32,6 @@ class download:
             data = urllib.urlencode(data)
         request = urllib2.Request(url, data, self.headers)
         response = self.opener.open(request)
+        print 'Downloading %s' % url
         html = response.read()
         return html
