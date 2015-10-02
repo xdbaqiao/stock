@@ -1,6 +1,7 @@
 这是一个关于股票的工程
 =============
 **dictionary是一个数据字典管理系统，基于bottle**
+![示例图片](http://imgur.com/BNXXYoo)
            
 **office是一个自动查询打卡脚本**    
            
