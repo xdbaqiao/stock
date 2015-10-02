@@ -157,7 +157,8 @@ def server_static(filename):
 def dictionary():
     department_sql = "select id,dkey from dictionary;"
     department_result = readDb(department_sql,)
-    return template('dictionary',department_result=department_result)
+    message = ''
+    return template('dictionary',department_result=department_result, message=message)
 
 @route('/adddict',method="POST")
 @checkAccess
