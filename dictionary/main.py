@@ -208,9 +208,9 @@ def changedict(id):
     data = (dvalue, dtable, comment, dkey)
     result = writeDb(sql,data)
     if result:
-        return '0'
+        return '2'
     else:
-        return '-1'
+        return '3'
 
 @route('/deldict',method="POST")
 @checkAccess

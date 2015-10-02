@@ -85,6 +85,8 @@ $(function(){
     */
     var editId;        //定义全局操作数据变量
 	var isEdit;
+	var modifyDKey;
+	modifyDKey = '';
     $('#myLoadTable').bootstrapTable({
           method: 'post',
           url: '/api/getdict',
@@ -177,11 +179,12 @@ $(function(){
     		}
     		if(result.length == 1){
                 $('#changedict').popover('hide');
+                modifyDKey = result[0]['dkey'];
                 $('#dkey').val(result[0]['dkey']);
                 $('#dvalue').val(result[0]['dvalue']);
                 $('#dtable').val(result[0]['dtable']);
                 $('#comment').val(result[0]['comment']);
-                $('#modalTitle').html('修改用户');     //头部修改
+                $('#modalTitle').html('修改字典');     //头部修改
                 $('#hidInput').val('1');            //修改标志
                 $('#myModal').modal('show');
                 editId = result[0]['dkey'];
@@ -194,6 +197,16 @@ $(function(){
     */
     $("#subBtn").click(function(){
            var dkey = $('#dkey').val();
+           if(modifyDKey!='')
+           {
+               if(dkey!=modifyDKey)
+               {
+                   $('#myModal').modal('hide');
+                   message.message_show(200,200,'失败','不可修改字段值');
+                   return false;
+               }
+               modifyDKey = ''
+           }
            var dvalue = $('#dvalue').val();
            var dtable = $('#dtable').val();
            var comment = $('#comment').val();
@@ -211,8 +224,20 @@ $(function(){
                     message.message_show(200,200,'成功','添加成功');   
                   }else if(data==-1){
                       $('#myModal').modal('hide');
-                      message.message_show(200,200,'失败','添加失败：存在相同记录');
+                      message.message_show(200,200,'失败','存在相同记录');
+                      return false;
+                      }
+                  else if(data==2){
+                    $('#myModal').modal('hide');
+                    $('#myLoadTable').bootstrapTable('refresh');
+                    message.message_show(200,200,'成功','修改成功');   
+                  }else if(data==3){
+                      $('#myModal').modal('hide');
+                      message.message_show(200,200,'失败','修改失败');
+                      return false;
                   }else{
+                      $('#myModal').modal('hide');
+                      message.message_show(200,200,'失败','异常状况');
                         console.log(data);return false;
                 }
             },'html');
