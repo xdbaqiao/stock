@@ -218,6 +218,7 @@ def deldict():
     id = request.forms.get('str').rstrip(',')
     if not id:
         return '-1'
+    id = ','.join("\'%s\'" % str(i) for i in id.split(','))
 
     sql = "delete from dictionary where dkey in (%s)" % id
     result = writeDb(sql,'')
