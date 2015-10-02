@@ -157,7 +157,8 @@ def server_static(filename):
 def dictionary():
     department_sql = "select id,dkey from dictionary;"
     department_result = readDb(department_sql,)
-    return template('dictionary',department_result=department_result)
+    message = ''
+    return template('dictionary',department_result=department_result, message=message)
 
 @route('/adddict',method="POST")
 @checkAccess
@@ -217,6 +218,7 @@ def deldict():
     id = request.forms.get('str').rstrip(',')
     if not id:
         return '-1'
+    id = ','.join("\'%s\'" % str(i) for i in id.split(','))
 
     sql = "delete from dictionary where dkey in (%s)" % id
     result = writeDb(sql,'')

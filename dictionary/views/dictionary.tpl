@@ -96,8 +96,8 @@ $(function(){
           pagination: true,
           pageSize: 15,
           pageList: [10,20,50],
-          search: true,
           showColumns: true,
+          search: true,
           showRefresh: true,
           minimumCountColumns: 2,
           clickToSelect: true,
@@ -208,9 +208,10 @@ $(function(){
                   if(data==0){
                     $('#myModal').modal('hide');
                     $('#myLoadTable').bootstrapTable('refresh');
-                    message.message_show(200,200,'成功','操作成功');   
+                    message.message_show(200,200,'成功','添加成功');   
                   }else if(data==-1){
-                      message.message_show(200,200,'失败','操作失败');
+                      $('#myModal').modal('hide');
+                      message.message_show(200,200,'失败','添加失败：存在相同记录');
                   }else{
                         console.log(data);return false;
                 }
