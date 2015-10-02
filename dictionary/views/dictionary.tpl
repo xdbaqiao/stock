@@ -201,6 +201,7 @@ $(function(){
            {
                if(dkey!=modifyDKey)
                {
+                   modifyDKey = ''
                    $('#myModal').modal('hide');
                    message.message_show(200,200,'失败','不可修改字段值');
                    return false;
