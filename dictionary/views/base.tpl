@@ -71,7 +71,7 @@
                     <ul class="breadcrumb">
                         <li>
                             <i class="fa fa-home"></i>
-                            <a href="#">首页</a>
+                            <a href="/">首页</a>
                         </li>
                         <li class="active">大厅</li>
                     </ul>

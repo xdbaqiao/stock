@@ -3,9 +3,6 @@
 <div class="page-sidebar" id="sidebar">
     <!-- Page Sidebar Header-->
     <div class="sidebar-header-wrapper">
-        <input type="text" class="searchinput" />
-        <i class="searchicon fa fa-search"></i>
-        <div class="searchhelper">搜索</div>
     </div>
     <!-- /Page Sidebar Header -->
 
