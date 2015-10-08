@@ -10,7 +10,7 @@ class download:
        proxy: the proxy format with ip:port
        is_cookie: whether download with cookie
     '''
-    def __init__(self, first_url, proxy=None, is_cookie=False):
+    def __init__(self, first_url='', proxy=None, is_cookie=False):
         self.user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:5.0) Gecko/20100101 Firefox/5.0'
         self.headers = {'User-Agent': self.user_agent, 'Accept-encoding':'gzip, deflate', 'Referer': first_url}
         if is_cookie:
@@ -46,4 +46,4 @@ class download:
 
 if __name__ == '__main__':
     url = 'http://www.baidu.com'
-    print download(url, is_cookie=True).get(url)
+    print download(is_cookie=True).get(url)
