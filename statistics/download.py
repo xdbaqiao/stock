@@ -5,7 +5,7 @@ import urllib
 import urllib2
 
 class download:
-    def __init__(self, first_url, proxy=None):
+    def __init__(self, first_url, proxy=None, cookie=''):
         self.user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:5.0) Gecko/20100101 Firefox/5.0'
         self.headers = {'User-Agent': self.user_agent, 'Accept-encoding':'gzip, deflate', 'Referer': first_url}
         self.opener = urllib2.build_opener()
