@@ -65,7 +65,8 @@ def common_re(str_re, html): m = re.compile(str_re).search(html)
 
 def login(userid, passwd, dynamic_passwd):
     url = 'https://sso.guosen.com.cn/Login.aspx'
-    html = download().get(url)
+    D = download(is_cookie=True)
+    html = D.get(url)
     post_data = {}
     post_data['__LASTFOCUS'] = ''
     post_data['__VIEWSTATE'] = common_re(r'id="__VIEWSTATE"\s*value="([^"]+)"', html)
@@ -83,16 +84,16 @@ def login(userid, passwd, dynamic_passwd):
     post_data['txtValidateCode'] =  ''
     post_data['btnLogin.x'] = '0'
     post_data['btnLogin.y'] =  '0'
-    html = download().post(url, post_data)
+    html = D.post(url, post_data)
     sso_url = 'https://sso.guosen.com.cn/Default.aspx'
-    html = download().get(sso_url)
+    html = D.get(sso_url)
     if '您好！欢迎访问单点系统' in html:
         print 'Login sucessfully!'
         hr_url = 'https://hr.guosen.com.cn/sso/SsoHrssServlet'
-        download().get(hr_url)
+        D.get(hr_url)
         end_url = 'https://hr.guosen.com.cn/hrss/ta/Clockin.jsp?_funcode=E0020902'
         post_url = 'https://hr.guosen.com.cn/hrss/dorado/smartweb2.RPC.d?__rpc=true'
-        download().get(end_url)
+        D.get(end_url)
     else:
         print 'Login fail...'
 
