@@ -2,6 +2,7 @@
 # coding: utf-8
 
 import sys
+import re
 import base64
 sys.path.append('..')
 
@@ -53,17 +54,18 @@ def get_post_xml(month, year):
     data_part1 = 'ps><p name="CYEAR">%s</p><p name="CPERIOD">%s</p></ps' % (year, month)
     data_base64 = base64.b64encode(data_part1)
     data_base64 = data_base64[:-2] if data_base64.endswith('==') else data_base64
-    data_part2 = '%s</p><p name="CMONTH" type="0">%s</p><p name="_funcode" type="0">E0020902</p><p name="__profileKeys" type="0">dtAllocate%3B09880b911e7d0a7d33dda07861fb41af%3Bform1%3B7551c8cb44e025ca4d03026fb2eea5c0</p></vps></rpc>' % (year, month)
+    data_part2 = '%s</p><p name="CMONTH" type="0">%s</p><p name="_funcode" type="0">E0020902</p><p name="__profileKeys" type="0">dtAllocate%%3B09880b911e7d0a7d33dda07861fb41af%%3Bform1%%3B7551c8cb44e025ca4d03026fb2eea5c0</p></vps></rpc>' % (year, month)
     data2_base64 = base64.b64encode(data_part2)
     return '0-S-0-NPHJwYyBpZD0iZHNBbGxvY2F0ZSIgdHlwZT0iQ3VzdG9tIiBvYmplY3RjbGF6ej0ibmMuYnMuaHJzcy50YS5DbG9ja2luSFZPIiBwaT0iMSIgcHM9IjEwMDAwIiBwYz0iMSIgcHJjPSIwIiBmcz0icGtfY2xvY2tpbl9oLFBLX0RJU1RMSVNULG51bSxkYXRlLHdlZWssYW1kYXRlLHBtZGF0ZSI$2B' + data_base64 + '' +\
       '$2BPHZwcz48cCBuYW1lPSJDWUVBUiIgdHlwZT0iMCI$2B' + data2_base64
 
-def common_re(str_re, html): m = re.compile(str_re).search(html)
+def common_re(str_re, html):
+    m = re.compile(str_re).search(html)
     if m:
         return m.groups()[0]
     return ''
 
-def login(userid, passwd, dynamic_passwd):
+def login(userid, passwd, dynamic_passwd, month, year):
     url = 'https://sso.guosen.com.cn/Login.aspx'
     D = download(is_cookie=True)
     html = D.get(url)
@@ -87,13 +89,29 @@ def login(userid, passwd, dynamic_passwd):
     html = D.post(url, post_data)
     sso_url = 'https://sso.guosen.com.cn/Default.aspx'
     html = D.get(sso_url)
+    login_data = {}
+    login_data['IASID'] = common_re(r'"IASID"[^>]+value="([^"]+)"', html)
+    login_data['Result'] = '0'
+    login_data['TimeStamp'] = common_re(r'"TimeStamp"[^>]+value="([^"]+)"', html)
+    login_data['UserAccount'] = userid
+    login_data['ErrorDescription'] = ''
+    login_data['Authenticator'] = common_re(r'"Authenticator"[^>]+value="([^"]+)"', html)
+    login_data['IASUserAccount'] = userid
+    html = D.post(sso_url, login_data)
     if '您好！欢迎访问单点系统' in html:
         print 'Login sucessfully!'
         hr_url = 'https://hr.guosen.com.cn/sso/SsoHrssServlet'
         D.get(hr_url)
         end_url = 'https://hr.guosen.com.cn/hrss/ta/Clockin.jsp?_funcode=E0020902'
-        post_url = 'https://hr.guosen.com.cn/hrss/dorado/smartweb2.RPC.d?__rpc=true'
         D.get(end_url)
+        post_url = 'https://hr.guosen.com.cn/hrss/dorado/smartweb2.RPC.d?__rpc=true'
+        search_data = {}
+        search_data['__type'] = 'loadData'
+        search_data['__viewInstanceId'] = 'nc.bs.hrss.ta.Clockin~nc.bs.hrss.ta.ClockinViewModel'
+        search_data['__xml'] = get_post_xml(month, year)
+        html = D.post(post_url, search_data)
+        if 'result succeed="true"' in html:
+            print 'Hello world!'
     else:
         print 'Login fail...'
 
