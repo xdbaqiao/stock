@@ -9,9 +9,8 @@ sys.path.append('..')
 
 import statistics.download
 
-def login(userid, passwd, dynamic_passwd):
+def login(D, userid, passwd, dynamic_passwd):
     url = 'https://sso.guosen.com.cn/Login.aspx'
-    D = download(is_cookie=True)
     html = D.get(url)
     post_data = {}
     post_data['__LASTFOCUS'] = ''

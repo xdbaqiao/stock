@@ -1,7 +1,12 @@
 #!/usr/bin/env python2
 # coding: utf-8
 
+from common import common_re
+from login import login
 import base64
+
+sys.path.append('..')
+import statistics.download
 
 '''
 post表单中有一个字段_xml是加密过的，从最后两个值是等号猜测是base64编码，据此做一下分析：
@@ -53,3 +58,42 @@ def get_post_xml(month, year):
     data2_base64 = base64.b64encode(data_part2)
     return '0-S-0-NPHJwYyBpZD0iZHNBbGxvY2F0ZSIgdHlwZT0iQ3VzdG9tIiBvYmplY3RjbGF6ej0ibmMuYnMuaHJzcy50YS5DbG9ja2luSFZPIiBwaT0iMSIgcHM9IjEwMDAwIiBwYz0iMSIgcHJjPSIwIiBmcz0icGtfY2xvY2tpbl9oLFBLX0RJU1RMSVNULG51bSxkYXRlLHdlZWssYW1kYXRlLHBtZGF0ZSI$2B' + data_base64 + '' +\
       '$2BPHZwcz48cCBuYW1lPSJDWUVBUiIgdHlwZT0iMCI$2B' + data2_base64
+
+def main():
+    D = download(is_cookie=True)
+    if not login(D, userid, passwd, dynamic_passwd):
+        # login fail, return
+        return
+    hr_url = 'https://hr.guosen.com.cn/sso/SsoHrssServlet'
+    html = D.get(hr_url)
+    login_data = {}
+    login_data['IASID'] = common_re(r'"IASID"[^>]+value="([^"]+)"', html)
+    login_data['TimeStamp'] = common_re(r'"TimeStamp"[^>]+value="([^"]+)"', html)
+    login_data['Authenticator'] = common_re(r'"Authenticator"[^>]+value="([^"]+)"', html)
+    login_data['ReturnURL'] = 'https://hr.guosen.com.cn/sso/SsoHrssServlet'
+    html = D.post('https://sso.guosen.com.cn/login.aspx', login_data)            
+    login_data = {}
+    login_data['IASID'] = common_re(r'"IASID"[^>]+value="([^"]+)"', html)
+    login_data['Result'] = '0' 
+    login_data['TimeStamp'] = common_re(r'"TimeStamp"[^>]+value="([^"]+)"', html)
+    login_data['UserAccount'] = userid
+    login_data['ErrorDescription'] = ''
+    login_data['Authenticator'] = common_re(r'"Authenticator"[^>]+value="([^"]+)"', html)
+    login_data['IASUserAccount'] = userid
+    html = D.post(hr_url, login_data)         
+
+    end_url = 'https://hr.guosen.com.cn/hrss/ta/Clockin.jsp?_funcode=E0020902'
+    D.get(end_url)
+    post_url = 'https://hr.guosen.com.cn/hrss/dorado/smartweb2.RPC.d?__rpc=true'
+    search_data = {}
+    search_data['__type'] = 'loadData'
+    search_data['__viewInstanceId'] = 'nc.bs.hrss.ta.Clockin~nc.bs.hrss.ta.ClockinViewModel'
+    search_data['__xml'] = get_post_xml(month, year) 
+    html = D.post(post_url, search_data)
+    if 'result succeed="true"' in html:
+        print 'Hello world!'
+    else:
+        print html
+
+if __init__ == '__main__':
+    main()
