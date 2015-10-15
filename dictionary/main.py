@@ -218,10 +218,9 @@ def deldict():
     id = request.forms.get('str').rstrip(',')
     if not id:
         return '-1'
-    id = ','.join("\'%s\'" % str(i) for i in id.split(','))
-
-    sql = "delete from dictionary where dkey in (%s)" % id
-    result = writeDb(sql,'')
+    id_all = ids.split(',')
+    sql = """delete from dictionary where dkey in (%s)""" % ','.join(['%s']*len(id_all))
+    result = writeDb(sql, tuple(id_all))
     if result:
         return '0'
     else:
@@ -297,3 +296,5 @@ if __name__ == '__main__':
     app = default_app()
     app = SessionMiddleware(app, session_opts)
     run(app=app,host='0.0.0.0', port=8080,debug=True,server='gevent')
+else:
+    application = SessionMiddleware(default_app(), session_opts)
