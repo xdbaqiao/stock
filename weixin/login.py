@@ -1,13 +1,9 @@
 #!/usr/bin/env python2
 # coding: utf-8
 
-import sys 
-import re
 import os
 import hashlib
 from download import download
-from common import common_re
-
 
 def login(D, username, passwd):
     url = 'https://mp.weixin.qq.com/cgi-bin/login'
@@ -27,7 +23,6 @@ def login(D, username, passwd):
     else:
         print 'Login fail.'
         return False
-
 
 if __name__ == '__main__':
     refer_url = 'https://mp.weixin.qq.com/'
