@@ -23,7 +23,7 @@ def scrape():
 
 def all_txt_scrape(D, stime, token):
     url = 'https://mp.weixin.qq.com/misc/appmsganalysis?action=report&type=daily&begin_date=%s&end_date=%s&token=%s&lang=zh_CN&f=json&ajax=1'
-    FIELDS = ['采集时间', '统计时间', '图文页阅读人数-全部', '图文页阅读次数-全部', '原文页阅读人数-全部', '原文页阅读次数-全部', '分享转发人数-全部', '分享转发次数-全部', '微信收藏人数-全部', '图文页阅读人数-会话', '图文页阅读次数-会话', '原文页阅读人数-会话', '原文页阅读次数-会话', '分享转发人数-会话', '分享转发次数-会话', '微信收藏人数-会话', '图文页阅读人数-好友转发', '图文页阅读次数-好友转发', '原文页阅读人数-好友转发', '原文页阅读次数-好友转发', '分享转发人数-好友转发', '分享转发次数-好友转发', '微信收藏人数-好友转发', '图文页阅读人数-朋友圈', '图文页阅读次数-朋友圈', '原文页阅读人数-朋友圈', '原文页阅读次数-朋友圈', '分享转发人数-朋友圈', '分享转发次数-朋友圈', '微信收藏人数-朋友圈', '图文页阅读人数-腾讯微博', '图文页阅读次数-腾讯微博', '原文页阅读人数-腾讯微博', '原文页阅读次数-腾讯微博', '分享转发人数-腾讯微博', '分享转发次数-腾讯微博', '微信收藏人数-腾讯微博', '图文页阅读人数-历史消息页', '图文页阅读次数-历史消息页', '原文页阅读人数-历史消息页', '原文页阅读次数-历史消息页', '分享转发人数-历史消息页', '分享转发次数-历史消息页', '微信收藏人数-历史消息页', '图文页阅读人数-其他', '图文页阅读次数-其他', '原文页阅读人数-其他', '原文页阅读次数-其他', '分享转发人数-其他', '分享转发次数-其他', '微信收藏人数-其他']
+    FIELDS = ['采集时间', '统计时间', '图文页阅读人数-全部', '图文页阅读次数-全部', '原文页阅读人数-全部', '原文页阅读次数-全部', '分享转发人数-全部', '分享转发次数-全部', '微信收藏人数-全部', '图文页阅读人数-会话', '图文页阅读次数-会话', '图文页阅读人数-好友转发', '图文页阅读次数-好友转发', '图文页阅读人数-朋友圈', '图文页阅读次数-朋友圈', '图文页阅读人数-腾讯微博', '图文页阅读次数-腾讯微博', '图文页阅读人数-历史消息页', '图文页阅读次数-历史消息页', '图文页阅读人数-其他', '图文页阅读次数-其他']
     html = D.get(url%(stime, stime, token))
     jdata = json.loads(html)
     if 'item' not in jdata:
@@ -37,14 +37,19 @@ def all_txt_scrape(D, stime, token):
     for i in jdata['item']:
         m = str(i['user_source'])
         assert(m in us)
-        mindex = 7*us.index(m) +2
-        bag[FIELDS[mindex]] = i['int_page_read_user']
-        bag[FIELDS[mindex+1]] = i['int_page_read_count']
-        bag[FIELDS[mindex+2]] = i['ori_page_read_user']
-        bag[FIELDS[mindex+3]] = i['ori_page_read_count']
-        bag[FIELDS[mindex+4]] = i['share_user']
-        bag[FIELDS[mindex+5]] = i['share_count']
-        bag[FIELDS[mindex+6]] = i['add_to_fav_user']
+        if m=='99999999':
+            mindex = 2
+            bag[FIELDS[mindex]] = i['int_page_read_user']
+            bag[FIELDS[mindex+1]] = i['int_page_read_count']
+            bag[FIELDS[mindex+2]] = i['ori_page_read_user']
+            bag[FIELDS[mindex+3]] = i['ori_page_read_count']
+            bag[FIELDS[mindex+4]] = i['share_user']
+            bag[FIELDS[mindex+5]] = i['share_count']
+            bag[FIELDS[mindex+6]] = i['add_to_fav_user']
+        else:
+            mindex = 2*us.index(m) + 7
+            bag[FIELDS[mindex]] = i['int_page_read_user']
+            bag[FIELDS[mindex+1]] = i['int_page_read_count']
     writer.writerow(bag.get(field) for field in FIELDS)
 
 def txt_scrape(D, stime, token):
