@@ -11,8 +11,8 @@ def common_re(str_re, html):
     return ''
 
 class UnicodeWriter:
-    def __init__(self, file, mode='wb', quoting=csv.QUOTE_ALL, utf8_bom=False, auto_repair=False, **argv):
-        self.encoding = 'utf-8'
+    def __init__(self, file, encoding='utf-8', mode='wb', quoting=csv.QUOTE_ALL, utf8_bom=False, auto_repair=False, **argv):
+        self.encoding = encoding
         self.unique = False 
         self.unique_by = None
         if hasattr(file, 'write'):
