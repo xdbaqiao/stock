@@ -128,7 +128,7 @@ def user_scrape(D, token, stime=''):
     bag[u'累积关注人数'] = common_re(r'cumulate_user:\s([^,]+),', m) if m else ''
     assert bag[u'统计时间']
     a = ['35', u'3', '43', '17', '0']
-    b = [u'搜索u公众号名称', u'搜索微信号', u'图文页右上角菜单', u'名片分享', u'其他']
+    b = [u'搜索公众号名称', u'搜索微信号', u'图文页右上角菜单', u'名片分享', u'其他']
     for num, i in enumerate(a):
         gain_url = 'https://mp.weixin.qq.com/misc/useranalysis?&begin_date=%s&end_date=%s&source=%s&token=%s&lang=zh_CN&f=json&ajax=1' % (bag[u'统计时间'], bag[u'统计时间'], i, token)
         gain_html = D.get(gain_url)
