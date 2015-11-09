@@ -17,7 +17,8 @@ def scrape():
     token= login(D, username, passwd)
     if not token:
         return
-    statistic_time  = raw_input('Please input the statistic time (for example: 2015-10-25):')
+    stime  = raw_input('Please input the statistic time (for example: 20151025):')
+    statistic_time = '-'.join([stime[:4], stime[4:6], stime[6:]])
     stime = user_scrape(D, token, statistic_time)
     txt_scrape(D, stime, token)
     all_txt_scrape(D, stime, token)
@@ -94,7 +95,10 @@ def txt_scrape(D, stime, token):
                 bag[u'原文页阅读总次数'] = i['ori_page_read_count']
                 bag[u'转发+收藏总人数'] = str(int(i['share_user']) + int(i['add_to_fav_user']))
                 bag[u'转发+收藏总次数'] = str(int(i['share_count']) + int(i['add_to_fav_count']))
-                bag[u'当日图文页阅读人数'] = infos[i['title']]['int_page_read_user']
+                try:
+                    bag[u'当日图文页阅读人数'] = infos[i['title']]['int_page_read_user']
+                except KeyError:
+                    continue
                 bag[u'当日图文页阅读次数'] = infos[i['title']]['int_page_read_count']
                 bag[u'当日原文页阅读人数'] = infos[i['title']]['ori_page_read_user']
                 bag[u'当日原文页阅读次数'] = infos[i['title']]['ori_page_read_count']
