@@ -5,13 +5,37 @@
 import re
 import json
 import  time
+import ConfigParser
 from common import common_re, UnicodeWriter
 from download import download
 
-FIELDS = ['关键字', '代码', '简称', '公告标题', '公告时间', 'PDF文件URL']
+FIELDS = [u'关键字', u'代码', u'简称', u'公告标题', u'公告时间', u'PDF文件URL']
 
 def read_conf():
-    return [i.strip() for i in open('setting.info')]
+    """Load settings
+    """
+    cfg = ConfigParser.ConfigParser()
+    cfg.read('setting.ini')
+
+    try:
+        sdate= cfg.get('setting', 'start_date')
+    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
+        sdate= ''
+    try:
+        edate= cfg.get('setting', 'end_date')
+    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
+        edate = '' 
+
+    idate = '%s ~ %s'% ('-'.join([sdate[:4], sdate[4:6], sdate[6:]]), '-'.join([edate[:4], edate[4:6], edate[6:]])) \
+            if sdate and edate else ''
+    try:
+        szse_task= cfg.get('setting', 'szse_task')
+        szse_tasks = szse_task.split(';') if  szse_task and ';' in szse_task else [szse_task]
+        bond_task= cfg.get('setting', 'bond_task')
+        bond_tasks = bond_task.split(';') if  bond_task and ';' in bond_task else [bond_task]
+    except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
+        raise Exception('Error: no task!')
+    return [idate, szse_tasks, bond_tasks]
 
 def get_last_trade_date():
     url = 'http://data.eastmoney.com/stock/lhb.html'
@@ -23,42 +47,45 @@ def get_last_trade_date():
         print 'Error: Can not get last trade date!'
         return ''
 
-def scrape(sdate):
-    writer = UnicodeWriter('cninfo.csv')
+def scrape():
+    [sdate, szse_tasks, bond_tasks] = read_conf()
+    writer = UnicodeWriter('cninfo.csv', 'gbk')
     writer.writerow(FIELDS)
     D = download('http://www.cninfo.com.cn/cninfo-new/announcement/show', is_cookie=True)
     url = 'http://www.cninfo.com.cn/cninfo-new/announcement/query'
-    last_date = get_last_trade_date()
-    for k in read_conf():
-        post_data = {}
+    last_date = get_last_trade_date() if not sdate else ''
+    post_data = {}
+    post_data['columnTitle'] = '历史公告查询'
+    post_data['pageNum'] =  '1'
+    post_data['pageSize'] = '30'
+    post_data['tabName'] = 'fulltext'
+    if sdate:
+        post_data['seDate'] = sdate
+        print 'Query interval time is: %s' % sdate
+    else:
+        post_data['seDate'] = last_date if last_date else '请选择日期'
+        print 'Last trade date is: %s' % last_date
+    for k in szse_tasks + bond_tasks:
+        post_data['column'] = 'szse' if k in szse_tasks else 'bond'
         post_data['searchkey'] = k
-        post_data['column'] = 'szse'
-        post_data['columnTitle'] = '历史公告查询'
-        post_data['pageNum'] =  '1'
-        post_data['pageSize'] = '30'
-        post_data['tabName'] = 'fulltext'
-        if sdate:
-            post_data['seDate'] = sdate
-        else:
-            post_data['seDate'] = last_date if last_date else '请选择日期'
-        html = D.post(url, data = post_data)
+        try:
+            html = D.post(url, data = post_data)
+        except Exception:
+            html = D.post(url, data = post_data)
         jdata = json.loads(html).get('announcements')
         if jdata:
             for i in jdata:
                 bag = {}
-                bag['关键字'] = k
-                bag['代码'] = str(i.get('secCode'))
-                bag['简称'] = i.get('secName')
-                bag['公告标题'] =  i.get('announcementTitle')
+                bag[u'关键字'] = '%s' % k
+                bag[u'代码'] = str(i.get('secCode'))
+                bag[u'简称'] = i.get('secName')
+                bag[u'公告标题'] =  i.get('announcementTitle')
                 stime = str(i.get('announcementTime'))
                 x = time.localtime(float(stime[:-3])) if stime else ''
-                bag['公告时间'] = time.strftime('%Y-%m-%d', x)
+                bag[u'公告时间'] = time.strftime('%Y-%m-%d', x)
                 m = i.get('announcementId')
-                bag['PDF文件URL'] = 'http://www.cninfo.com.cn/cninfo-new/disclosure/szse/bulletin_detail/true/' + m if m else ''
+                bag[u'PDF文件URL'] = 'http://www.cninfo.com.cn/cninfo-new/disclosure/szse/bulletin_detail/true/' + m if m else ''
                 writer.writerow(bag.get(field) for field in FIELDS)
 
 if __name__ == '__main__':
-    sdate = raw_input('请输入统计开始日期，如20141109：')
-    edate = raw_input('请输入统计结束日期，如20151109：')
-    idate = '%s ~ %s'% ('-'.join([sdate[:4], sdate[4:6], sdate[6:]]), '-'.join([edate[:4], edate[4:6], edate[6:]]))
-    scrape(idate)
+    scrape()
