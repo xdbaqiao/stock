@@ -30,9 +30,9 @@ def read_conf():
             if sdate and edate else ''
     try:
         szse_task= cfg.get('setting', 'szse_task')
-        szse_tasks = szse_task.split(';') if  szse_task and ';' in szse_task else [szse_task]
+        szse_tasks = szse_task.split(';') if  szse_task else []
         bond_task= cfg.get('setting', 'bond_task')
-        bond_tasks = bond_task.split(';') if  bond_task and ';' in bond_task else [bond_task]
+        bond_tasks = bond_task.split(';') if  bond_task else []
     except (ConfigParser.NoSectionError, ConfigParser.NoOptionError), e:
         raise Exception('Error: no task!')
     return [idate, szse_tasks, bond_tasks]
@@ -72,11 +72,12 @@ def scrape():
             html = D.post(url, data = post_data)
         except Exception:
             html = D.post(url, data = post_data)
+        html = html.decode('utf-8')
         jdata = json.loads(html).get('announcements')
         if jdata:
             for i in jdata:
                 bag = {}
-                bag[u'关键字'] = '%s' % k
+                bag[u'关键字'] = '%s' % k.decode('utf-8')
                 bag[u'代码'] = str(i.get('secCode'))
                 bag[u'简称'] = i.get('secName')
                 bag[u'公告标题'] =  i.get('announcementTitle')
