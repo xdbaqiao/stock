@@ -2,7 +2,9 @@
 # coding: utf-8
 
 import os
+import sys
 import hashlib
+sys.path.append('../common')
 from download import download
 from common import common_re
 

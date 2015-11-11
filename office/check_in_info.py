@@ -1,12 +1,12 @@
 #!/usr/bin/env python2
 # coding: utf-8
 
-from common import common_re
 from login import login
 import base64
 
-sys.path.append('..')
-import statistics.download
+sys.path.append('../common')
+from common import download
+from common import common_re
 
 '''
 post表单中有一个字段_xml是加密过的，从最后两个值是等号猜测是base64编码，据此做一下分析：

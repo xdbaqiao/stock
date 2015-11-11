@@ -2,12 +2,15 @@
 # coding: utf-8
 
 import os
+import sys
 import time
 import datetime
 import json
-from common import common_re, UnicodeWriter
 from login import login
-from download  import download
+
+sys.path.append('../common')
+from common import common_re, UnicodeWriter
+from download import download
 
 def scrape():
     refer_url = 'https://mp.weixin.qq.com/'

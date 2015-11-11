@@ -3,6 +3,8 @@
 
 import re
 import json
+import sys
+sys.path.append('../common')
 from download import download 
 
 def get_latest_information(stock_code):
