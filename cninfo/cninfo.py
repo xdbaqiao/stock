@@ -3,9 +3,12 @@
 # http://www.cninfo.com.cn/cninfo-new/announcement/query
 
 import re
+import sys
 import json
 import  time
 import ConfigParser
+
+sys.path.append('../common')
 from common import common_re, UnicodeWriter
 from download import download
 

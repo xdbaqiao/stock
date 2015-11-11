@@ -3,11 +3,11 @@
 
 import sys
 import re
+
+sys.path.append('../common')
+
+from common import download
 from common import common_re
-
-sys.path.append('..')
-
-import statistics.download
 
 def login(D, userid, passwd, dynamic_passwd):
     url = 'https://sso.guosen.com.cn/Login.aspx'
